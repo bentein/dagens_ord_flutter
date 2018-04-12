@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../classes/Word.dart';
+import '../globals/WordManager.dart';
 
 class Favorite extends StatefulWidget  {
   Favorite({this.word});
@@ -10,16 +12,20 @@ class Favorite extends StatefulWidget  {
 }
 
 class _FavoriteState extends State<Favorite> {
+  WordManager wm = new WordManager();
   bool _favorite = false;
 
   void _favoriteWord() {
     setState(() {
-      _favorite = !_favorite;
+      if (!_favorite && wm.addFavorite(widget.word)) _favorite = !_favorite;
+      else if (_favorite && wm.removeFavorite(widget.word)) _favorite = !_favorite;
     });
   }
   
   @override
   Widget build(BuildContext context) {
+    if (wm.isFavorite(widget.word)) _favorite = true;
+
     return new GestureDetector(
       child: new Row(
         children: <Widget>[

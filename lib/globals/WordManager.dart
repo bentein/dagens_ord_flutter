@@ -1,20 +1,19 @@
 import '../classes/Word.dart';
 
-class WordManager/*  extends Object with ChangeNotifier */ {
+class WordManager {
   static final WordManager _instance = new WordManager._internal();
 
   factory WordManager() {
     return _instance;
   }
 
-  //@reflectable
   List<Word> wordList;
+  List<Word> favorites;
 
   WordManager._internal() {
-    //this.changes.listen((List<ChangeRecord> record) => record.forEach(print));
     initWordList();
+    initFavorites();
   }
-
 
   void initWordList() {
     wordList = <Word>[
@@ -28,8 +27,38 @@ class WordManager/*  extends Object with ChangeNotifier */ {
     ];
   }
 
-  void addWord(Word word) {
-    if (word.isValid())wordList.add(word);
+  void initFavorites() {
+    favorites = <Word>[];
+  }
+
+  bool addWord(Word word) {
+    bool added = false;
+    if (word.isValid()) {
+      wordList.add(word);
+      added = true;
+    }
+    return added;
+  }
+
+  bool addFavorite(Word word) {
+    bool added = false;
+    if (word.isValid() && !favorites.contains(word)) {
+      favorites.add(word);
+      added = true;
+    }
+    return added;
+  }
+
+  bool removeFavorite(Word word) {
+    bool removed = false;
+    if (favorites.remove(word)) removed = true;
+    return removed;
+  }
+
+  bool isFavorite(Word word) {
+    bool isFavorite = false;
+    if (favorites.contains(word)) isFavorite = true;
+    return isFavorite;
   }
   
 }

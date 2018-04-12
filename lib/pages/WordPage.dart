@@ -13,7 +13,6 @@ class WordPage extends StatefulWidget {
 }
 
 class _WordPageState extends State<WordPage> {
-  WordManager wm = new WordManager();
 
   @override
   Widget build(BuildContext context) {

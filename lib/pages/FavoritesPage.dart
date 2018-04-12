@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../classes/Word.dart';
 import '../globals/WordManager.dart';
+import '../widgets/WordCard.dart';
 
 class FavoritesPage extends StatefulWidget {
   FavoritesPage({Key key}) : super(key: key);
@@ -11,24 +12,29 @@ class FavoritesPage extends StatefulWidget {
 
 class _FavoritesPageState extends State<FavoritesPage> {
   WordManager wm = new WordManager();
+  Word word = new Word(
+    word: 'new word',
+    pronounciation: 'how to pronounce the word',
+    type: 'type of the word',
+    description: 'new description of the word',
+    example: 'example of the word in use',
+  );
 
   _changeWord() {
     setState(() {
-      wm.wordList[0] = new Word(
-        word: 'new test word',
-        pronounciation: 'how to pronounce the word',
-        type: 'type of the word',
-        description: 'description of the word',
-        example: 'example of the word in use',
-      );
+      wm.addFavorite(word);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      body: new Center(
-        child: new Text(wm.wordList[0].word),
+      body: new ListView.builder(
+        padding: new EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
+        itemCount: wm.favorites.length,
+        itemBuilder: (BuildContext context, int index) {
+          return new WordCard(word: wm.favorites[index]);
+        },
       ),
       floatingActionButton: new FloatingActionButton(
         onPressed: _changeWord,
