@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../classes/Word.dart';
 import '../widgets/Favorite.dart';
-import '../globals/WordManager.dart';
+import '../globals/Variables.dart' show APP_ID, WORD_PAGE_BANNER_ID;
+
+import 'package:firebase_admob/firebase_admob.dart';
 
 class WordPage extends StatefulWidget {
   WordPage({Key key, this.word, this.title}) : super(key: key);
@@ -18,9 +20,40 @@ class WordPage extends StatefulWidget {
 }
 
 class _WordPageState extends State<WordPage> {
+  static final MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
+    testDevices: APP_ID != null ? [APP_ID] : null,
+    keywords: ['Words', 'Learning', 'Information', 'Dictionary'],
+  );
+
+  BannerAd bannerAd;
+
+  BannerAd buildBanner() {
+    return BannerAd(
+      adUnitId: BannerAd.testAdUnitId,
+      targetingInfo: targetingInfo,
+      size: AdSize.smartBanner,
+      listener: (MobileAdEvent event) {
+        //print(event);
+      }
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseAdMob.instance.initialize(appId: FirebaseAdMob.testAppId);
+    bannerAd = buildBanner()..load();
+  }
+
+  @override
+  void dispose() {
+    bannerAd?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    bannerAd..load()..show();
     return new Scaffold(
       appBar: (widget.title ? new AppBar(
         title: new Text(widget.word.word)

@@ -10,6 +10,10 @@ dependencies:
   cupertino_icons: ^0.1.0
   http: ^0.11.3+16
   path_provider: "^0.4.0"
+  google_sign_in: "0.3.1"                                           # new
+  firebase_analytics: "0.0.4"                                       # new
+  firebase_auth: "0.2.0"
+  firebase_admob: "^0.5.2"
 
 dev_dependencies:
   flutter_test:
