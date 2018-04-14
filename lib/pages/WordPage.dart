@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../classes/Word.dart';
 import '../widgets/Favorite.dart';
-import '../globals/Variables.dart' show APP_ID, WORD_PAGE_BANNER_ID;
+import '../globals/Variables.dart' show APP_ID;
 
 import 'package:firebase_admob/firebase_admob.dart';
 

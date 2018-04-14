@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 
 import 'WordPage.dart';
 import 'FavoritesPage.dart';
