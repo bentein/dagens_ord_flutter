@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import '../classes/Word.dart';
 
 import 'DataAccess.dart';
+import 'LocalStorage.dart';
 
 class WordManager {
   static final WordManager _instance = new WordManager._internal();
@@ -13,7 +16,6 @@ class WordManager {
   List<Word> wordList;
   List<Word> favorites;
 
-
   WordManager._internal() {
     initWordList();
     initFavorites();
@@ -21,31 +23,41 @@ class WordManager {
   }
 
   DataAccess dao = new DataAccess();
+  LocalStorage lst = new LocalStorage();
 
-  void initWordList() {
-    wordList = <Word>[
-      new Word(
-        word: 'test word',
-        pronounciation: 'how to pronounce the word',
-        type: 'type of the word',
-        description: 'description of the word',
-        example: 'example of the word in use',
-        date: Word.getCurrentDate(),
-      ),
-    ];
+  void initWordList() async {
+    wordList = (await lst.getWordList());
+    if (wordList.length == 0) {
+      wordList = (await dao.getWords(Word.getPastDate(10), Word.getCurrentDate()));
+      lst.writeWordList(wordList);
+    }
+    wordList.sort((a,b) => b.date.compareTo(a.date));
   }
 
-  void initFavorites() {
-    favorites = <Word>[];
+  void initFavorites() async {
+    favorites = (await lst.getFavorites());
+    if (favorites.length == 0) {
+      favorites = <Word>[];
+    }
   }
 
-  void initWOTD() async {
-    wotd = (await dao.getWords(Word.getCurrentDate(), Word.getCurrentDate()))[0];
+  Future<List<Word>> initWOTD() {
+    Future<List<Word>> future = dao.getWords(Word.getCurrentDate(), Word.getCurrentDate());
+    future.then((wordList) => wotd = wordList[0]);
+    return future;
+  }
+
+  void addWordList(List<Word> _wordList) {
+    _wordList.forEach((word) {
+      addWord(word);
+    });
+    wordList.sort((a,b) => b.date.compareTo(a.date));
+    lst.writeWordList(wordList);
   }
 
   bool addWord(Word word) {
     bool added = false;
-    if (word.isValid()) {
+    if (word.isValid() && !isInWordList(word)) {
       wordList.add(word);
       added = true;
     }
@@ -58,6 +70,8 @@ class WordManager {
       favorites.add(word);
       added = true;
     }
+    favorites.sort((a,b) => b.date.compareTo(a.date));
+    lst.writeFavorites(favorites);
     return added;
   }
 
@@ -70,7 +84,16 @@ class WordManager {
       }
     } 
     if (removed) removed = favorites.remove(word);
+    lst.writeFavorites(favorites);
     return removed;
+  }
+
+  bool isInWordList(Word word) {
+    bool isInList = false;
+    for (var _word in wordList) {
+      if (_word.word == word.word && _word.date == word.date) isInList = true;
+    } 
+    return isInList;
   }
 
   bool isFavorite(Word word) {

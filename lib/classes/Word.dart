@@ -1,9 +1,9 @@
 class Word {
-  Word({this.word, this.pronounciation, this.type, this.description, this.example, this.date});
+  Word({this.word, this.pronounciation, this.type, this.description, this.example, this.date, this.categories});
 
   factory Word.json(dynamic json) {
-    return new Word(word: json['word'], pronounciation: json['pronounciation'],
-      type: json['type'], description: json['description'], example: json['example'], date: json['date']);
+    return new Word(word: json['word'], pronounciation: json['pronounciation'], type: json['type'], 
+      description: json['description'], example: json['example'], date: json['date'], categories: json['categories']);
   }
 
   final String word;
@@ -12,6 +12,18 @@ class Word {
   final String description;
   final String example;
   final String date;
+  final List<String> categories;
+
+  Map toJson() {
+    return {
+      "word" : word,
+      "pronounciation" : pronounciation,
+      "type" : type,
+      "description" : description,
+      "example" : example,
+      "date" : date,
+    };
+  }
 
   bool isValid() {
     bool isValid = true;
@@ -24,6 +36,18 @@ class Word {
     if (isValid && date == "") isValid = false;
 
     return isValid;
+  }
+
+  static int getDaysSince(Word word) {
+    DateTime now = new DateTime.now();
+
+    int year = int.parse(word.date.substring(0,4));
+    int month = int.parse(word.date.substring(5,7));
+    int day = int.parse(word.date.substring(8,10));
+
+    DateTime then = new DateTime(year, month, day);
+
+    return now.difference(then).inDays;
   }
 
   static String getPastDate(int daysInPast) {

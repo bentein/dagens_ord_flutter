@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 import 'WordPage.dart';
 import 'FavoritesPage.dart';
+import 'HistoryPage.dart';
 
 import '../classes/Word.dart';
 import '../globals/WordManager.dart';
@@ -17,7 +19,18 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   static WordManager wm = new WordManager();
-  Widget body = new WordPage(word: wm.wordList[0]);
+  Widget body = new FutureBuilder<List<Word>>(
+    future: wm.initWOTD(),
+    builder: (BuildContext context, AsyncSnapshot<List<Word>> snapshot) {
+      switch (snapshot.connectionState) {
+        case ConnectionState.none: return new Text('Press button to start');
+        case ConnectionState.waiting: return new Text('Awaiting result...');
+        default:
+          if (snapshot.hasError) return new Text('Error: ${snapshot.error}');
+          else return new WordPage.base(snapshot.data[0]);
+      }
+    }
+  );
   
   @override
   Widget build(BuildContext context) {
@@ -47,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               ),
               onTap: () {
                 setState(() {
-                  body = new WordPage(word: wm.wotd);
+                  body = new WordPage.base(wm.wotd);
                   Navigator.pop(context);                  
                 });
               },
@@ -63,7 +76,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 ],
               ),
               onTap: () {
-                
+                setState(() {
+                  body = new HistoryPage();
+                  Navigator.pop(context);           
+                });
               },
             ),
             new ListTile(
@@ -86,6 +102,20 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             new ListTile(
               title: new Row(
                 children: <Widget>[
+                  new Icon(Icons.search),
+                  new Padding(
+                    padding: EdgeInsets.only(left: 5.0),
+                    child: new Text("Søk"),
+                  ),
+                ],
+              ),
+              onTap: () {
+
+              },
+            ),
+            new ListTile(
+              title: new Row(
+                children: <Widget>[
                   new Icon(Icons.settings),
                   new Padding(
                     padding: EdgeInsets.only(left: 5.0),
@@ -99,6 +129,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             ),
           ],
         ),
+        
       ),
       body: body,
     );

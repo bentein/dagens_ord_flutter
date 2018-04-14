@@ -24,21 +24,32 @@ class _FavoritesPageState extends State<FavoritesPage> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      body: new ListView.builder(
+  Widget _getListView() {
+    Widget widget;
+
+    if (wm.favorites.length > 0) 
+      widget = new ListView.builder(
         padding: new EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
         itemCount: wm.favorites.length,
         itemBuilder: (BuildContext context, int index) {
           return new WordCard(word: wm.favorites[index]);
         },
-      ),
-      floatingActionButton: new FloatingActionButton(
-        onPressed: _changeWord,
-        tooltip: 'Increment',
-        child: new Icon(Icons.add),
-      ),
+      );
+    else 
+      widget = new Center(
+        child: new Text(
+          "Du har ingen favorittord",
+          style: Theme.of(context).textTheme.display1
+        ),
+      );
+      
+    return widget;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      body: _getListView(),
     );
   }
 }

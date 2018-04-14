@@ -5,8 +5,13 @@ import '../widgets/Favorite.dart';
 import '../globals/WordManager.dart';
 
 class WordPage extends StatefulWidget {
-  WordPage({Key key, this.word}) : super(key: key);
+  WordPage({Key key, this.word, this.title}) : super(key: key);
   final Word word;
+  final bool title;
+
+  factory WordPage.base(Word word) {
+    return WordPage(word: word, title: false);
+  }
 
   @override
   _WordPageState createState() => new _WordPageState();
@@ -17,9 +22,9 @@ class _WordPageState extends State<WordPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      /* appBar: new AppBar(
-        title: new Text(widget.title)
-      ), */
+      appBar: (widget.title ? new AppBar(
+        title: new Text(widget.word.word)
+      ) : null),
       body: new Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
