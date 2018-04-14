@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../classes/Word.dart';
 import '../globals/WordManager.dart';
+import '../globals/DataAccess.dart';
 import '../widgets/WordCard.dart';
 
 class FavoritesPage extends StatefulWidget {
@@ -12,17 +13,14 @@ class FavoritesPage extends StatefulWidget {
 
 class _FavoritesPageState extends State<FavoritesPage> {
   WordManager wm = new WordManager();
-  Word word = new Word(
-    word: 'new word',
-    pronounciation: 'how to pronounce the word',
-    type: 'type of the word',
-    description: 'new description of the word',
-    example: 'example of the word in use',
-  );
+  DataAccess dao = new DataAccess();
 
-  _changeWord() {
+  _changeWord() async {
+    var list = (await dao.getWords(Word.getCurrentDate(), Word.getCurrentDate()));
     setState(() {
-      wm.addFavorite(word);
+      list.forEach((word) {
+        wm.addFavorite(word);
+      });
     });
   }
 

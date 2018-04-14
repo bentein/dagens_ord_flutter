@@ -9,16 +9,6 @@ import '../globals/WordManager.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -26,68 +16,91 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
-  WordManager wm = new WordManager();
-
+  static WordManager wm = new WordManager();
+  Widget body = new WordPage(word: wm.wordList[0]);
+  
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    final List<Tab> tabList = <Tab>[
-      new Tab(
-        child: new Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            new Icon(Icons.bookmark),
-            new Padding(
-              padding: new EdgeInsets.symmetric(horizontal: 5.0),
-              child: new Text("Dagens Ord"),
-            )
-          ],
-        )
-      ),
-      new Tab(
-        child: new Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            new Icon(Icons.list),
-            new Padding(
-              padding: new EdgeInsets.symmetric(horizontal: 5.0),
-              child: new Text("Favoritter"),
-            ),
-          ],
-        )
-      )
-    ];
-
-
-    TabController _tabController = new TabController(
-      length: tabList.length,
-      vsync: this
-    );
-    
     return new Scaffold(
       appBar: new AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: new Text(widget.title),
-        bottom: new TabBar(
-          controller: _tabController,
-          tabs: tabList
-        )
       ),
-      body: new TabBarView(
-        controller: _tabController,
-        children: <Widget>[
-          new WordPage(
-            word: wm.wordList[0]
-          ),
-          new FavoritesPage(),
-        ]
+      drawer: new Drawer(
+        child: new ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            new DrawerHeader(
+              child: new Text("Naviger"),
+              decoration: new BoxDecoration(
+                color: Theme.of(context).primaryColor
+              ),
+            ),
+            new ListTile(
+              title: new Row(
+                children: <Widget>[
+                  new Icon(Icons.bookmark_border),
+                  new Padding(
+                    padding: EdgeInsets.only(left: 5.0),
+                    child: new Text("Dagens Ord"),
+                  ),
+                ],
+              ),
+              onTap: () {
+                setState(() {
+                  body = new WordPage(word: wm.wotd);
+                  Navigator.pop(context);                  
+                });
+              },
+            ),
+            new ListTile(
+              title: new Row(
+                children: <Widget>[
+                  new Icon(Icons.history),
+                  new Padding(
+                    padding: EdgeInsets.only(left: 5.0),
+                    child: new Text("Historie"),
+                  ),
+                ],
+              ),
+              onTap: () {
+                
+              },
+            ),
+            new ListTile(
+              title: new Row(
+                children: <Widget>[
+                  new Icon(Icons.favorite_border),
+                  new Padding(
+                    padding: EdgeInsets.only(left: 5.0),
+                    child: new Text("Favoritter"),
+                  ),
+                ],
+              ),
+              onTap: () {
+                setState(() {
+                  body = new FavoritesPage();
+                  Navigator.pop(context);                  
+                });
+              },
+            ),
+            new ListTile(
+              title: new Row(
+                children: <Widget>[
+                  new Icon(Icons.settings),
+                  new Padding(
+                    padding: EdgeInsets.only(left: 5.0),
+                    child: new Text("Instillinger"),
+                  ),
+                ],
+              ),
+              onTap: () {
+
+              },
+            ),
+          ],
+        ),
       ),
+      body: body,
     );
   }
 }

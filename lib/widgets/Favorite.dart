@@ -18,7 +18,7 @@ class _FavoriteState extends State<Favorite> {
   void _favoriteWord() {
     setState(() {
       if (!_favorite && wm.addFavorite(widget.word)) _favorite = !_favorite;
-      else if (_favorite && wm.removeFavorite(widget.word)) _favorite = !_favorite;
+      else if (_favorite && wm.removeFavorite(widget.word)) {_favorite = !_favorite;}
     });
   }
   

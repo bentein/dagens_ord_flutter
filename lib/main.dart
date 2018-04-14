@@ -10,10 +10,10 @@ import 'globals/WordManager.dart';
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
+  static WordManager wm = new WordManager();
 
   @override
   Widget build(BuildContext context) {
-    WordManager wm = new WordManager();
 
     return new MaterialApp(
       title: 'Flutter Demo',
@@ -29,11 +29,6 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.deepPurple,
       ),
       home: new MyHomePage(title: 'Dagens Ord'),
-      routes: <String, WidgetBuilder> {
-        '/a': (BuildContext context) => new WordPage(
-          word: wm.wordList[0],
-        ),
-      },
     );
   }
 }

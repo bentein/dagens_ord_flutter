@@ -69,6 +69,19 @@ class _WordCardState extends State<WordCard> {
                     Icons.search,
                     size: iconSize,
                   )
+                ),
+                new Padding(
+                  padding: new EdgeInsets.fromLTRB(0.0,0.0,10.0,0.0),
+                  child: new Icon(
+                    Icons.share,
+                    size: iconSize,
+                  )
+                ),
+                new Expanded(
+                  child: new Text(
+                    widget.word.date.toString(),
+                    textAlign: TextAlign.end,
+                  ),
                 )
               ],
             )
