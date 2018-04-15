@@ -5,6 +5,7 @@ import 'WordPage.dart';
 import 'FavoritesPage.dart';
 import 'HistoryPage.dart';
 import 'SearchPage.dart';
+import 'FeedbackPage.dart';
 import 'HelpPage.dart';
 
 import '../classes/Word.dart';
@@ -214,16 +215,21 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             new ListTile(
               leading: new Icon(
                 Icons.feedback,
-                color: (body is Word ? selectedColor : Colors.black),
+                color: (body is FeedbackPage ? selectedColor : Colors.black),
               ),
               title: new Text(
                 "Send tilbakemelding",
                 style: new TextStyle(
-                  color: (body is Word ? selectedColor : Colors.black)
+                  color: (body is FeedbackPage ? selectedColor : Colors.black)
                 ), 
               ),
               onTap: () {
-
+                setState(() {
+                  title = "Tilbakemelding";
+                  search = false;
+                  body = new FeedbackPage();
+                  Navigator.pop(context);
+                });
               },
             ),
             new ListTile(
