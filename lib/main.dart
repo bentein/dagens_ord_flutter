@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: new ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
-      home: new MyHomePage(title: 'Dagens Ord'),
+      home: new MyHomePage(),
     );
   }
 }

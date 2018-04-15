@@ -55,9 +55,9 @@ class _WordPageState extends State<WordPage> {
   Widget build(BuildContext context) {
     bannerAd..load()..show();
     return new Scaffold(
-      appBar: (widget.title ? new AppBar(
-        title: new Text(widget.word.word)
-      ) : null),
+      appBar: (widget.title 
+        ? new AppBar(title: new Text(widget.word.word)) 
+        : null),
       body: new Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[

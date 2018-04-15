@@ -38,8 +38,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
     else 
       widget = new Center(
         child: new Text(
-          "Du har ingen favorittord",
-          style: Theme.of(context).textTheme.display1
+          "Legg til en favoritt ved å trykke på et hjerteikon",
+          style: Theme.of(context).textTheme.display1,
+          textAlign: TextAlign.center,
+          
         ),
       );
       
