@@ -29,72 +29,74 @@ class _WordCardState extends State<WordCard> {
   Widget build(BuildContext context) {
     if (wm.isFavorite(widget.word)) _favorite = true;
 
-    return new GestureDetector(
+    return new Material(
       child: new Card(
-        child: new Padding(
-          padding: new EdgeInsets.all(15.0),
-          child: new Column(
-            children: <Widget>[
-              new Row(
-                children: <Widget>[
-                  new Text(
-                    widget.word.word,
-                    style: Theme.of(context).textTheme.title,
-                  ),
-                ],
-              ),
-              new Padding(
-                padding: new EdgeInsets.symmetric(vertical: 10.0),
-                child: new Row(
+        child: new InkWell(
+          onTap: () {
+            Navigator.push(context, new MaterialPageRoute(builder: (context) => new WordPage(word:widget.word, title: true)));
+          },
+          child: new Padding(
+            padding: new EdgeInsets.all(15.0),
+            child: new Column(
+              children: <Widget>[
+                new Row(
                   children: <Widget>[
                     new Text(
-                      widget.word.description,
+                      widget.word.word,
+                      style: Theme.of(context).textTheme.title,
                     ),
                   ],
                 ),
-              ),
-              new Row(
-                children: <Widget>[
-                  new Padding(
-                    padding: new EdgeInsets.fromLTRB(0.0,0.0,10.0,0.0),
-                    child: new GestureDetector(
-                      child: new Icon(
-                        (_favorite ? Icons.favorite : Icons.favorite_border),
-                        color : (_favorite ? Colors.red : Colors.black),
-                        size: iconSize,
+                new Padding(
+                  padding: new EdgeInsets.symmetric(vertical: 10.0),
+                  child: new Row(
+                    children: <Widget>[
+                      new Text(
+                        widget.word.description,
                       ),
-                      onTap: _favoriteWord,
-                    )
+                    ],
                   ),
-                  new Padding(
-                    padding: new EdgeInsets.fromLTRB(0.0,0.0,10.0,0.0),
-                    child: new Icon(
-                      Icons.search,
-                      size: iconSize,
-                    )
-                  ),
-                  new Padding(
-                    padding: new EdgeInsets.fromLTRB(0.0,0.0,10.0,0.0),
-                    child: new Icon(
-                      Icons.share,
-                      size: iconSize,
-                    )
-                  ),
-                  new Expanded(
-                    child: new Text(
-                      widget.word.date.toString(),
-                      textAlign: TextAlign.end,
+                ),
+                new Row(
+                  children: <Widget>[
+                    new Padding(
+                      padding: new EdgeInsets.fromLTRB(0.0,0.0,10.0,0.0),
+                      child: new GestureDetector(
+                        child: new Icon(
+                          (_favorite ? Icons.favorite : Icons.favorite_border),
+                          color : (_favorite ? Colors.red : Colors.black),
+                          size: iconSize,
+                        ),
+                        onTap: _favoriteWord,
+                      )
                     ),
-                  )
-                ],
-              )
-            ],
+                    new Padding(
+                      padding: new EdgeInsets.fromLTRB(0.0,0.0,10.0,0.0),
+                      child: new Icon(
+                        Icons.search,
+                        size: iconSize,
+                      )
+                    ),
+                    new Padding(
+                      padding: new EdgeInsets.fromLTRB(0.0,0.0,10.0,0.0),
+                      child: new Icon(
+                        Icons.share,
+                        size: iconSize,
+                      )
+                    ),
+                    new Expanded(
+                      child: new Text(
+                        widget.word.date.toString(),
+                        textAlign: TextAlign.end,
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),
-      onTap: () {
-        Navigator.push(context, new MaterialPageRoute(builder: (context) => new WordPage(word:widget.word, title: true)));
-      },
     );
   }
 }
