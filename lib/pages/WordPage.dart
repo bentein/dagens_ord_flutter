@@ -29,7 +29,7 @@ class _WordPageState extends State<WordPage> {
 
   BannerAd buildBanner() {
     return BannerAd(
-      adUnitId: WORD_PAGE_BANNER_ID,
+      adUnitId: BannerAd.testAdUnitId,
       targetingInfo: targetingInfo,
       size: AdSize.smartBanner,
       listener: (MobileAdEvent event) {
