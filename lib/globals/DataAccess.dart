@@ -27,4 +27,19 @@ class DataAccess {
 
     return wordList;
   }
+
+  Future<List<Word>> searchWords(String query) async {
+    List<Word> wordList = [];
+
+    String url = "https://a71n4w0dwf.execute-api.eu-west-1.amazonaws.com/testing/search";
+    url += "?query=$query";
+
+    var items = (await http.get(url)).body;
+    List _words = json.decode(items)['Items'];
+    _words.forEach((word) {
+      wordList.add(new Word.json(word));
+    });
+
+    return wordList;
+  }
 }

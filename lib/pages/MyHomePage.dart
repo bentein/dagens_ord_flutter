@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 import 'WordPage.dart';
 import 'FavoritesPage.dart';
@@ -7,6 +8,7 @@ import 'SearchPage.dart';
 
 import '../classes/Word.dart';
 import '../globals/WordManager.dart';
+import '../globals/DataAccess.dart';
 
 
 class MyHomePage extends StatefulWidget {
@@ -18,8 +20,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   static WordManager wm = new WordManager();
-  static String title = "";
-
+  static DataAccess dao = new DataAccess();
+  static String title = "Dagens Ord";
+  static bool search = false;
+  static Future<List<Word>> results;
+  static List<String> filters = [];
 
   Widget body = new FutureBuilder<List<Word>>(
     future: wm.initWOTD(),
@@ -29,9 +34,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         case ConnectionState.waiting: return new Text('Awaiting result...');
         default:
           if (snapshot.hasError) return new Text('Error: ${snapshot.error}');
-          else if (snapshot.data.length > 0) return new WordPage.base(snapshot.data[0]);
+          else if (snapshot.data.length > 0) {
+            return new WordPage.base(snapshot.data[0]);
+          } 
           else {
-            title = "Dagens Ord";
             return new WordPage.base(wm.wordList[0]);
           }
       }
@@ -39,14 +45,65 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   );
 
   @override
-  Widget build(BuildContext context) {
-    
+  Widget build(BuildContext context) {    
     MaterialColor selectedColor = Colors.purple;
 
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text(title),
+        title: (!search 
+        ? new Text(title)
+        : new TextField(
+          autofocus: true,
+          onSubmitted: (String input) {
+            results = dao.searchWords(input); 
+            setState(() {
+              body = new SearchPage(results: results);
+              search = false;
+            });
+          },
+        )),
+        actions: (body is SearchPage
+          ? <Widget>[
+            new IconButton(
+              icon: new Icon(Icons.search),
+              tooltip: "Søk",
+              onPressed: () {
+                setState(() {
+                  search = true;
+                });
+              },
+            ),
+            new Builder(
+              builder: (BuildContext context) {
+                return new IconButton(
+                  icon: new Icon(Icons.filter_list),
+                  tooltip: "Filter",
+                  onPressed: () {
+                    Scaffold.of(context).openEndDrawer();
+                    search = false;
+                  },
+                );
+              },
+            ),
+            
+          ]
+        : null),
       ),
+      endDrawer: (body is SearchPage
+        ? new Drawer(
+          child: new ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              new DrawerHeader(
+                child: new Text("Filtre"),
+                decoration: new BoxDecoration(
+                  color: Theme.of(context).primaryColor
+                ),
+              ),
+            ],
+          ),
+        )
+        : null),
       drawer: new Drawer(
         child: new ListView(
           padding: EdgeInsets.zero,
@@ -71,6 +128,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               onTap: () {
                 setState(() {
                   title = "Dagens Ord";
+                  search = false;
                   body = new WordPage.base(wm.wotd);
                   Navigator.pop(context);                  
                 });
@@ -88,8 +146,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 ), 
               ),
               onTap: () {
-                  title = "Historie";
                 setState(() {
+                  title = "Historie";
+                  search = false;
                   body = new HistoryPage();
                   Navigator.pop(context);           
                 });
@@ -109,6 +168,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               onTap: () {
                 setState(() {
                   title = "Favoritter";
+                  search = false;
                   body = new FavoritesPage();
                   Navigator.pop(context);                  
                 });
@@ -128,6 +188,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               onTap: () {
                 setState(() {
                   title = "Søk";
+                  search = false;
                   body = new SearchPage();
                   Navigator.pop(context);
                 });
