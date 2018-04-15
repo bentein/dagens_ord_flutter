@@ -37,9 +37,11 @@ class _SearchPageState extends State<SearchPage> {
               );
             } 
             else {
-              return new Text(
+              return new Center(
+                child: new Text(
                 "Ingen ord matcher søket",
                 style: Theme.of(context).textTheme.display1,
+                ),
               );
             }
         }

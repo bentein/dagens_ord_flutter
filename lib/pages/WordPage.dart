@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../classes/Word.dart';
 import '../widgets/Favorite.dart';
@@ -118,22 +119,30 @@ class _WordPageState extends State<WordPage> {
                 ),
                 new Expanded(
                   child: new GestureDetector(
-                    child: new Row(
-                      children: <Widget>[
-                        new Icon(
-                          Icons.search,
-                          size: 40.0
-                        ),
-                        new Padding(
-                          padding: new EdgeInsets.symmetric(horizontal: 5.0),
-                          child: new Text("Søk etter " + widget.word.word.toLowerCase()),
-                        )
-                      ],
+                    child: new Container(
+                      color: Colors.transparent,
+                      child: new Row(
+                        children: <Widget>[
+                          new Icon(
+                            Icons.search,
+                            size: 40.0
+                          ),
+                          new Padding(
+                            padding: new EdgeInsets.symmetric(horizontal: 5.0),
+                            child: new Text("Søk etter " + widget.word.word.toLowerCase()),
+                          )
+                        ],
+                      ),
                     ),
-                    onTap: () {
-                      print("search");
+                    onTap: () async {
+                      var url = 'https://www.google.com/search?q=' + widget.word.word;
+                      if (await canLaunch(url)) {
+                        await launch(url);
+                      } else {
+                        throw 'Could not launch $url';
+                      }
                     }
-                  )
+                  ),
                 ),
               ],
             ),

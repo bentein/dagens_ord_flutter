@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:share/share.dart';
 
 import '../classes/Word.dart';
 import '../globals/WordManager.dart';
@@ -59,30 +61,36 @@ class _WordCardState extends State<WordCard> {
                 ),
                 new Row(
                   children: <Widget>[
-                    new Padding(
-                      padding: new EdgeInsets.fromLTRB(0.0,0.0,10.0,0.0),
-                      child: new GestureDetector(
-                        child: new Icon(
-                          (_favorite ? Icons.favorite : Icons.favorite_border),
-                          color : (_favorite ? Colors.red : Colors.black),
-                          size: iconSize,
-                        ),
-                        onTap: _favoriteWord,
-                      )
+                    new IconButton(
+                      icon: new Icon(
+                        (_favorite ? Icons.favorite : Icons.favorite_border),
+                        color : (_favorite ? Colors.red : Colors.black),
+                        size: iconSize,
+                      ),
+                      onPressed: _favoriteWord,
                     ),
-                    new Padding(
-                      padding: new EdgeInsets.fromLTRB(0.0,0.0,10.0,0.0),
-                      child: new Icon(
+                    new IconButton(
+                      icon: new Icon(
                         Icons.search,
                         size: iconSize,
-                      )
+                      ),
+                      onPressed: () async {
+                        var url = 'https://www.google.com/search?q=' + widget.word.word;
+                        if (await canLaunch(url)) {
+                          await launch(url);
+                        } else {
+                          throw 'Could not launch $url';
+                        }
+                      },
                     ),
-                    new Padding(
-                      padding: new EdgeInsets.fromLTRB(0.0,0.0,10.0,0.0),
-                      child: new Icon(
+                    new IconButton(
+                      icon: new Icon(
                         Icons.share,
                         size: iconSize,
-                      )
+                      ),
+                      onPressed: () {
+                        share('Vet du hva ordet "' + widget.word.word + '" betyr? Lær det i dag med Dagens Ord!');
+                      },
                     ),
                     new Expanded(
                       child: new Text(

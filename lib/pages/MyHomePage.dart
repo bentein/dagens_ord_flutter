@@ -5,6 +5,7 @@ import 'WordPage.dart';
 import 'FavoritesPage.dart';
 import 'HistoryPage.dart';
 import 'SearchPage.dart';
+import 'HelpPage.dart';
 
 import '../classes/Word.dart';
 import '../globals/WordManager.dart';
@@ -46,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {    
-    MaterialColor selectedColor = Colors.purple;
+    MaterialColor selectedColor = Colors.deepPurple;
 
     return new Scaffold(
       appBar: new AppBar(
@@ -228,16 +229,21 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             new ListTile(
               leading: new Icon(
                 Icons.help,
-                color: (body is Word ? selectedColor : Colors.black),
+                color: (body is HelpPage ? selectedColor : Colors.black),
               ),
               title: new Text(
                 "Hjelp",
                 style: new TextStyle(
-                  color: (body is Word ? selectedColor : Colors.black)
+                  color: (body is HelpPage ? selectedColor : Colors.black)
                 ),
               ),
               onTap: () {
-
+                setState(() {
+                  title = "Hjelp";
+                  search = false;
+                  body = new HelpPage();
+                  Navigator.pop(context);
+                });
               },
             ),
           ],
