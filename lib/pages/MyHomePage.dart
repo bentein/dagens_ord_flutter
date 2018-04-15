@@ -26,7 +26,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         case ConnectionState.waiting: return new Text('Awaiting result...');
         default:
           if (snapshot.hasError) return new Text('Error: ${snapshot.error}');
-          else return new WordPage.base(snapshot.data[0]);
+          else if (snapshot.data.length > 0) return new WordPage.base(snapshot.data[0]);
+          else return new WordPage.base(wm.wordList[0]);
       }
     }
   );

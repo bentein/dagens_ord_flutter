@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../classes/Word.dart';
 import '../widgets/Favorite.dart';
-import '../globals/Variables.dart' show APP_ID;
+import '../globals/Variables.dart' show APP_ID, WORD_PAGE_BANNER_ID;
 
 import 'package:firebase_admob/firebase_admob.dart';
 
@@ -29,7 +29,7 @@ class _WordPageState extends State<WordPage> {
 
   BannerAd buildBanner() {
     return BannerAd(
-      adUnitId: BannerAd.testAdUnitId,
+      adUnitId: WORD_PAGE_BANNER_ID,
       targetingInfo: targetingInfo,
       size: AdSize.smartBanner,
       listener: (MobileAdEvent event) {
