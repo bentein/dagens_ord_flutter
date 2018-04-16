@@ -29,13 +29,19 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   static bool search = false;
   static Future<List<Word>> results;
   static List<String> filters = [];
+  static bool test = true;
 
   Widget body = new FutureBuilder<List<Word>>(
     future: wm.initWOTD(),
     builder: (BuildContext context, AsyncSnapshot<List<Word>> snapshot) {
       switch (snapshot.connectionState) {
         case ConnectionState.none: return new Text('Press button to start');
-        case ConnectionState.waiting: return new Text('Awaiting result...');
+        case ConnectionState.waiting: return new Center(
+          child: new CircularProgressIndicator(
+            strokeWidth: 4.0,
+          ),
+        );
+        
         default:
           if (snapshot.hasError) return new Text('Error: ${snapshot.error}');
           else if (snapshot.data.length > 0) {
@@ -61,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           onSubmitted: (String input) {
             results = dao.searchWords(input); 
             setState(() {
-              body = new SearchPage(results: results);
+              body = new SearchPage(results: results, filters: filters);
               search = false;
             });
           },
@@ -104,6 +110,43 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   color: Theme.of(context).primaryColor
                 ),
               ),
+              new CheckboxListTile(
+                value: filters.contains("Substantiv"),
+                dense: true,
+                title: new Text("Substantiv"),
+                onChanged: (bool b) {
+                  if (b) { filters.add("Substantiv"); }
+                  else { filters.remove("Substantiv"); }
+                  setState(() {
+                    body = new SearchPage(results: results, filters: filters);             
+                  });
+                },
+              ),
+              new CheckboxListTile(
+                value: filters.contains("Adjektiv"),
+                dense: true,
+                title: new Text("Adjektiv"),
+                onChanged: (bool b) {
+                  if (b) { filters.add("Adjektiv"); }
+                  else { filters.remove("Adjektiv"); }
+                  setState(() {
+                    body = new SearchPage(results: results, filters: filters);
+                  });
+                },
+              ),
+              new CheckboxListTile(
+                value: filters.contains("Verb"),
+                dense: true,
+                title: new Text("Verb"),
+                onChanged: (bool b) {
+                  if (b) { filters.add("Verb"); }
+                  else { filters.remove("Verb"); }
+                  setState(() {
+                    body = new SearchPage(results: results, filters: filters);
+                  });
+                },
+              ),
+              new Divider(),
             ],
           ),
         )
@@ -153,7 +196,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 setState(() {
                   title = "Historie";
                   search = false;
-                  body = new HistoryPage();
+                  if (body is! HistoryPage) body = new HistoryPage();
                   Navigator.pop(context);           
                 });
               },
@@ -173,7 +216,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 setState(() {
                   title = "Favoritter";
                   search = false;
-                  body = new FavoritesPage();
+                  if (body is! FavoritesPage) body = new FavoritesPage();
                   Navigator.pop(context);                  
                 });
               },
@@ -193,7 +236,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 setState(() {
                   title = "Søk";
                   search = false;
-                  body = new SearchPage();
+                  results = null;
+                  if (body is! SearchPage) body = new SearchPage();
                   Navigator.pop(context);
                 });
               },
@@ -229,7 +273,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 setState(() {
                   title = "Tilbakemelding";
                   search = false;
-                  body = new FeedbackPage();
+                  if (body is! FeedbackPage) body = new FeedbackPage();
                   Navigator.pop(context);
                 });
               },
@@ -249,7 +293,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 setState(() {
                   title = "Hjelp";
                   search = false;
-                  body = new HelpPage();
+                  if (body is! HelpPage) body = new HelpPage();
                   Navigator.pop(context);
                 });
               },

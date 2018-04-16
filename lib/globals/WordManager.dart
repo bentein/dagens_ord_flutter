@@ -19,7 +19,6 @@ class WordManager {
   WordManager._internal() {
     initWordList();
     initFavorites();
-    initWOTD();
   }
 
   DataAccess dao = new DataAccess();
@@ -27,10 +26,8 @@ class WordManager {
 
   void initWordList() async {
     wordList = (await lst.getWordList());
-    if (wordList.length == 0) {
-      wordList = (await dao.getWords(Word.getPastDate(10), Word.getCurrentDate()));
-      lst.writeWordList(wordList);
-    }
+    wordList = (await dao.getWords(Word.getPastDate(10), Word.getCurrentDate()));
+    lst.writeWordList(wordList);
     wordList.sort((a,b) => b.date.compareTo(a.date));
   }
 
@@ -43,7 +40,10 @@ class WordManager {
 
   Future<List<Word>> initWOTD() {
     Future<List<Word>> future = dao.getWords(Word.getCurrentDate(), Word.getCurrentDate());
-    future.then((wordList) => wotd = wordList[0]);
+    future.then((wordList){ 
+      wotd = wordList[0];
+      addWord(wotd);
+    });
     return future;
   }
 

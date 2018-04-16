@@ -53,9 +53,11 @@ class _WordCardState extends State<WordCard> {
                   padding: new EdgeInsets.symmetric(vertical: 10.0),
                   child: new Row(
                     children: <Widget>[
-                      new Text(
-                        widget.word.description,
-                      ),
+                      new Flexible(
+                        child: new Text(
+                          widget.word.description,
+                        ),
+                      )
                     ],
                   ),
                 ),

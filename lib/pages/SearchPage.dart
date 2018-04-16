@@ -6,9 +6,10 @@ import '../classes/Word.dart';
 import '../widgets/WordCard.dart';
 
 class SearchPage extends StatefulWidget {
-  SearchPage({Key key, this.results}) : super(key: key);
+  SearchPage({Key key, this.results, this.filters}) : super(key: key);
 
   final Future<List<Word>> results;
+  final List<String> filters;
 
   @override
   _SearchPageState createState() => new _SearchPageState();
@@ -21,20 +22,42 @@ class _SearchPageState extends State<SearchPage> {
       builder: (BuildContext context, AsyncSnapshot<List<Word>> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none: return new Text('Press button to start');
-          case ConnectionState.waiting: return new Text('Awaiting result...');
+          case ConnectionState.waiting: return new Center(
+            child: new CircularProgressIndicator(
+              strokeWidth: 4.0,
+            ),
+          );
           default:
             if (snapshot.hasError) return new Text('Error: ${snapshot.error}');
             else if (snapshot.data.length > 0){
-              return new Scrollbar(
-                child: new ListView.builder(
+              int items = 0;
+              List<Widget> cardList = [];
+
+              snapshot.data.sort((a,b) => b.date.compareTo(a.date));
+              snapshot.data.forEach((Word word) {
+                if (widget.filters.length == 0 || widget.filters.contains(word.type)) {
+                  cardList.add(new WordCard(word: word));
+                  items++;
+                }
+              });
+              
+              Widget sb = new Scrollbar(
+                child: new ListView(
                   padding: new EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
-                  itemCount: snapshot.data.length,
                   physics: AlwaysScrollableScrollPhysics(),
-                  itemBuilder: (BuildContext context, int index) {
-                    return new WordCard(word: snapshot.data[index]);
-                  },
+                  children: cardList,
                 ), 
               );
+
+              Widget error = new Center(
+                child: new Text(
+                  "Ingen ord matcher søket",
+                  style: Theme.of(context).textTheme.display1,
+                ),
+              );
+              
+              if (items == 0) return error;
+              else return sb;
             } 
             else {
               return new Center(

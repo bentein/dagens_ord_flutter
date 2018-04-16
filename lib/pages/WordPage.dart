@@ -71,7 +71,8 @@ class _WordPageState extends State<WordPage> {
               widget.word.example,
               style: Theme.of(context).textTheme.body1
             )
-          ), new Padding(
+          ),
+          new Padding(
             padding: new EdgeInsets.all(25.0),
             child: new SizedBox(
               height: 3.0,
