@@ -3,10 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../classes/Word.dart';
 import '../widgets/Favorite.dart';
-/* import '../globals/Variables.dart' show APP_ID, WORD_PAGE_BANNER_ID, PROD; */
 import '../globals/AdsManager.dart';
-
-/* import 'package:firebase_admob/firebase_admob.dart'; */
 
 class WordPage extends StatefulWidget {
   WordPage({Key key, this.word, this.title}) : super(key: key);

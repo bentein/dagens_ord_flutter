@@ -11,6 +11,7 @@ import 'HelpPage.dart';
 import '../classes/Word.dart';
 import '../globals/WordManager.dart';
 import '../globals/DataAccess.dart';
+import '../globals/AdsManager.dart';
 
 
 class MyHomePage extends StatefulWidget {
@@ -23,6 +24,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   static WordManager wm = new WordManager();
   static DataAccess dao = new DataAccess();
+  static AdsManager ads = new AdsManager();
   static String title = "Dagens Ord";
   static bool search = false;
   static Future<List<Word>> results;
@@ -119,12 +121,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             new ListTile(
               leading: new Icon(
                 Icons.bookmark_border,
-                color: (body is WordPage ? selectedColor : Colors.black),
+                color: (body is WordPage || body is FutureBuilder<List<Word>> ? selectedColor : Colors.black),
               ),
               title: new Text(
                 "Dagens Ord",
                 style: new TextStyle(
-                  color: (body is WordPage ? selectedColor : Colors.black)
+                  color: (body is WordPage || body is FutureBuilder<List<Word>> ? selectedColor : Colors.black)
                 ), 
               ),
               onTap: () {
@@ -132,7 +134,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   title = "Dagens Ord";
                   search = false;
                   body = new WordPage.base(wm.wotd);
-                  Navigator.pop(context);                  
+                  Navigator.pop(context);
                 });
               },
             ),

@@ -20,6 +20,7 @@ class AdsManager {
   );
 
   BannerAd bannerAd;
+  bool showing = false;
 
   BannerAd buildBanner() {
     return BannerAd(
@@ -33,11 +34,17 @@ class AdsManager {
   }
 
   void show() {
-    bannerAd = buildBanner()..load()..show();
+    if (!showing) {
+      bannerAd = buildBanner()..load()..show();
+      showing = true;
+    }
   }
 
-  void dispose() {
-    bannerAd?.dispose();
+  void dispose() async {
+    if (showing) {
+      await bannerAd?.dispose();
+      showing = false;
+    }
   }
 
 }
