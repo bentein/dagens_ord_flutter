@@ -94,19 +94,21 @@ class _WordPageState extends State<WordPage> {
                   child: new GestureDetector(
                     child: new Container(
                       color: Colors.transparent,
-                      child: new Row(
-                        children: <Widget>[
-                          new Icon(
-                            Icons.search,
-                            size: 40.0
-                          ),
-                          new Padding(
-                            padding: new EdgeInsets.symmetric(horizontal: 5.0),
-                            child: new Text("Søk etter " + widget.word.word.toLowerCase()),
-                          )
-                        ],
+                        child: new Row(
+                          children: <Widget>[
+                            new Icon(
+                              Icons.search,
+                              size: 40.0
+                            ),
+                            new Flexible(
+                              child: new Padding(
+                                padding: new EdgeInsets.symmetric(horizontal: 5.0),
+                                child: new Text("Søk etter " + widget.word.word.toLowerCase()),
+                              )
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
                     onTap: () async {
                       var url = 'https://www.google.com/search?q=' + widget.word.word;
                       if (await canLaunch(url)) {
