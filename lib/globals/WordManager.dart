@@ -13,10 +13,12 @@ class WordManager {
   }
 
   Word wotd;
+  Future<List<Word>> wotdFuture;
   List<Word> wordList;
   List<Word> favorites;
 
   WordManager._internal() {
+    initWOTD();
     initWordList();
     initFavorites();
   }
@@ -40,10 +42,13 @@ class WordManager {
 
   Future<List<Word>> initWOTD() {
     Future<List<Word>> future = dao.getWords(Word.getCurrentDate(), Word.getCurrentDate());
-    future.then((wordList){ 
-      wotd = wordList[0];
-      addWord(wotd);
+    future.then((wordList) { 
+      if (wordList.length > 0) {
+        wotd = wordList[0];
+        addWord(wotd);
+      }
     });
+    wotdFuture = future;
     return future;
   }
 

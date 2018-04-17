@@ -23,8 +23,20 @@ class _SearchPageState extends State<SearchPage> {
         switch (snapshot.connectionState) {
           case ConnectionState.none: return new Text('Press button to start');
           case ConnectionState.waiting: return new Center(
-            child: new CircularProgressIndicator(
-              strokeWidth: 4.0,
+            child: new Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                new CircularProgressIndicator(
+                  strokeWidth: 4.0,
+                ),
+                new Padding(
+                  padding: EdgeInsets.only(bottom: 10.0),
+                ),
+                new Text(
+                  "Søker",
+                  style: Theme.of(context).textTheme.display1,
+                )
+              ],
             ),
           );
           default:

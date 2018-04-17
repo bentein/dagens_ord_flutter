@@ -32,22 +32,35 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   static bool test = true;
 
   Widget body = new FutureBuilder<List<Word>>(
-    future: wm.initWOTD(),
+    future: wm.wotdFuture,
     builder: (BuildContext context, AsyncSnapshot<List<Word>> snapshot) {
       switch (snapshot.connectionState) {
         case ConnectionState.none: return new Text('Press button to start');
         case ConnectionState.waiting: return new Center(
-          child: new CircularProgressIndicator(
-            strokeWidth: 4.0,
-          ),
-        );
+            child: new Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                new CircularProgressIndicator(
+                  strokeWidth: 4.0,
+                ),
+                new Padding(
+                  padding: EdgeInsets.only(bottom: 10.0),
+                ),
+                new Text(
+                  "Henter dagens ord",
+                  style: Theme.of(context).textTheme.display1,
+                )
+              ],
+            ),
+          );
         
         default:
           if (snapshot.hasError) return new Text('Error: ${snapshot.error}');
-          else if (snapshot.data.length > 0) {
+          else if (snapshot.data.length == 0) {
+            return new WordPage.base(null);
+          } else if (snapshot.data.length > 0) {
             return new WordPage.base(snapshot.data[0]);
-          } 
-          else {
+          } else {
             return new WordPage.base(wm.wordList[0]);
           }
       }
