@@ -50,6 +50,13 @@ class _SearchPageState extends State<SearchPage> {
                 if (widget.filters.length == 0 || widget.filters.contains(word.type)) {
                   cardList.add(new WordCard(word: word));
                   items++;
+                } else if (word.categories.length > 0) {
+                  word.categories.forEach((str) {
+                    if (widget.filters.contains(str)) {
+                      cardList.add(new WordCard(word: word));
+                      items++;
+                    }
+                  });
                 }
               });
               

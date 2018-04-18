@@ -22,6 +22,7 @@ class DataAccess {
     var items = (await http.get(url)).body;
     List _words = json.decode(items)['Items'];
     _words.forEach((word) {
+      if (word['categories'] != null && word['categories'].length > 0) word['categories'] = word['categories']['values'];
       wordList.add(new Word.json(word));
     });
 
@@ -37,6 +38,7 @@ class DataAccess {
     var items = (await http.get(url)).body;
     List _words = json.decode(items)['Items'];
     _words.forEach((word) {
+      if (word['categories'] != null && word['categories'].length > 0) word['categories'] = word['categories']['values'];
       wordList.add(new Word.json(word));
     });
 

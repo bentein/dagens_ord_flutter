@@ -27,7 +27,7 @@ class WordManager {
   LocalStorage lst = new LocalStorage();
 
   void initWordList() async {
-    wordList = (await lst.getWordList());
+    //wordList = (await lst.getWordList());
     wordList = (await dao.getWords(Word.getPastDate(10), Word.getCurrentDate()));
     lst.writeWordList(wordList);
     wordList.sort((a,b) => b.date.compareTo(a.date));

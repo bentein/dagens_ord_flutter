@@ -3,11 +3,12 @@ class Word {
 
   factory Word.json(dynamic json) {
     List<String> cat = <String>[];
-
-    if (json['categories'] != null && json['categories'].length > 0 && json['categories']['values'].length > 0) {      
-      json['categories']['values'].forEach((str) {
-        cat.add(str);
-      });
+    if (json['categories'] != null) {
+      List<dynamic> list = json['categories'];
+      print(list);
+      for (int i = 0; i < list.length; i++) {
+        cat.add(list[i] + "");
+      }
     }
 
     return new Word(word: json['word'], pronounciation: json['pronounciation'], type: json['type'], 

@@ -24,12 +24,16 @@ class LocalStorage {
     try {
       final file = await _wordList;
       String contents = await file.readAsString();
-      List _json = json.decode(contents);
+      List<dynamic> _json = json.decode(contents);
       List<Word> wordList = <Word>[];
 
-      _json.forEach((word) {
+      for (int i = 0; i < _json.length; i++) {
+        Word word = new Word.json(_json[i]);
+        wordList.add(word);
+      }
+      /* if (_json != null && _json.length > 0) _json.forEach((word) {
         wordList.add(new Word.json(word));
-      });
+      }); */
 
       return wordList;
     } catch (e,st) {
