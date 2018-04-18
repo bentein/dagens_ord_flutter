@@ -28,7 +28,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   static String title = "Dagens Ord";
   static bool search = false;
   static Future<List<Word>> results;
-  static List<String> filters = ["Test"];
+  static List<String> filters = [];
   static bool test = true;
 
   Widget body = new FutureBuilder<List<Word>>(
