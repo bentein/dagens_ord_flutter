@@ -4,7 +4,7 @@ class Word {
   factory Word.json(dynamic json) {
     List<String> cat = <String>[];
 
-    if (json['categories'] != null && json['categories'].length > 0 && json['categories']['values'].length > 0) {
+    if (json['categories'] != null && json['categories'].length > 0 && json['categories']['values'].length > 0) {      
       json['categories']['values'].forEach((str) {
         cat.add(str);
       });

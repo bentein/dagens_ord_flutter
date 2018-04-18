@@ -32,7 +32,8 @@ class LocalStorage {
       });
 
       return wordList;
-    } catch (e) {
+    } catch (e,st) {
+      print(st);
       return <Word>[];
     }
   }
