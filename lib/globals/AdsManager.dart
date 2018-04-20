@@ -1,4 +1,5 @@
 import 'package:firebase_admob/firebase_admob.dart';
+import 'dart:async';
 
 import '../globals/Variables.dart' show APP_ID, WORD_PAGE_BANNER_ID, PROD;
 
@@ -11,7 +12,6 @@ class AdsManager {
 
   AdsManager._internal() {
     FirebaseAdMob.instance.initialize(appId: FirebaseAdMob.testAppId);
-    bannerAd = buildBanner()..load();
   }
 
   static final MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
@@ -33,17 +33,23 @@ class AdsManager {
     );
   }
 
-  void show() {
+  Future<bool> load() {
+    bannerAd = buildBanner();
+    return bannerAd.load();
+  }
+
+  void show() async {
     if (!showing) {
-      bannerAd = buildBanner()..load()..show();
-      showing = true;
+      if (await bannerAd.show()) showing = true;
     }
   }
 
   void dispose() async {
     if (showing) {
-      await bannerAd?.dispose();
-      showing = false;
+      if (await bannerAd?.dispose()) {
+        bannerAd = buildBanner()..load();
+        showing = false;
+      }
     }
   }
 
