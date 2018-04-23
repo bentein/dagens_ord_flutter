@@ -31,7 +31,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   static List<String> filters = [];
   static bool test = true;
 
-  Widget body = new FutureBuilder<List<Word>>(
+  Widget body = new WordPage.base(wm.wotd);
+  
+  /*new FutureBuilder<List<Word>>(
     future: wm.wotdFuture,
     builder: (BuildContext context, AsyncSnapshot<List<Word>> snapshot) {
       switch (snapshot.connectionState) {
@@ -65,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           }
       }
     }
-  );
+  ); */
 
   @override
   Widget build(BuildContext context) {    
