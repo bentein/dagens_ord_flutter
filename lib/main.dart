@@ -17,9 +17,10 @@ class MyApp extends StatelessWidget {
 
   static final Future<bool> future = new Future<bool>(() async {
     bool adsFuture = await ads.load();
-    List<Word> wmFuture = await wm.initWOTD();
+    List<Word> wotdFuture = await wm.initWOTD();
+    bool wlFuture = await wm.initWordList();
 
-    if (adsFuture && wmFuture != null) {
+    if (adsFuture && wlFuture && wotdFuture != null) {
       return true;
     } else {
       return false;
@@ -67,7 +68,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return new MaterialApp(
       title: 'Dagens Ord',
       theme: new ThemeData(

@@ -18,19 +18,46 @@ class WordManager {
   List<Word> favorites;
 
   WordManager._internal() {
-    initWOTD();
-    initWordList();
     initFavorites();
   }
 
   DataAccess dao = new DataAccess();
   LocalStorage lst = new LocalStorage();
 
-  void initWordList() async {
-    //wordList = (await lst.getWordList());
-    wordList = (await dao.getWords(Word.getPastDate(10), Word.getCurrentDate()));
+  Future<bool> initWordList() async {
+    wordList = (await lst.getWordList());
+
+    DateTime today = new DateTime.now();
+    DateTime mostRecentWordDate = Word.getDateTime(wordList.first.date);
+
+    if (today.difference(mostRecentWordDate).inDays != 0) {
+      List<Word> recentWords = (await dao.getWords(Word.getPastDate(10), Word.getCurrentDate()));
+      addWordList(recentWords);
+    }
+
+    String lastDate = "";
+    List<List<Word>> newWordLists = <List<Word>>[];
+    for (int i = 0; i < wordList.length; i++) {
+      if (lastDate.length > 0) {
+        DateTime previous = Word.getDateTime(lastDate);
+        DateTime current = Word.getDateTime(wordList[i].date);
+        print(previous.difference(current).inDays);
+        if (previous.difference(current).inDays > 1) {
+          List<Word> newWords = (await dao.getWords(wordList[i].date, lastDate));
+          newWordLists.add(newWords);
+        }
+      }
+      lastDate = wordList[i].date;
+    }
+
+    for (int i = 0; i < newWordLists.length; i++) {
+      addWordList(newWordLists[i]);
+    }
+
     lst.writeWordList(wordList);
     wordList.sort((a,b) => b.date.compareTo(a.date));
+
+    return true;
   }
 
   void initFavorites() async {

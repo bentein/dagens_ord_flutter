@@ -48,14 +48,17 @@ class Word {
     return isValid;
   }
 
+  static DateTime getDateTime(String date) {
+    int year = int.parse(date.substring(0,4));
+    int month = int.parse(date.substring(5,7));
+    int day = int.parse(date.substring(8,10));
+
+    return new DateTime(year, month, day);
+  }
+
   static int getDaysSince(Word word) {
     DateTime now = new DateTime.now();
-
-    int year = int.parse(word.date.substring(0,4));
-    int month = int.parse(word.date.substring(5,7));
-    int day = int.parse(word.date.substring(8,10));
-
-    DateTime then = new DateTime(year, month, day);
+    DateTime then = getDateTime(word.date);
 
     return now.difference(then).inDays;
   }
