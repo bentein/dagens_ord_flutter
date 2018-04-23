@@ -5,7 +5,6 @@ class Word {
     List<String> cat = <String>[];
     if (json['categories'] != null) {
       List<dynamic> list = json['categories'];
-      print(list);
       for (int i = 0; i < list.length; i++) {
         cat.add(list[i] + "");
       }

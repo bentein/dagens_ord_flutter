@@ -14,8 +14,8 @@ class WordManager {
 
   Word wotd;
   Future<List<Word>> wotdFuture;
-  List<Word> wordList;
-  List<Word> favorites;
+  List<Word> wordList = <Word>[];
+  List<Word> favorites = <Word>[];
 
   WordManager._internal() {
     initFavorites();
@@ -41,7 +41,6 @@ class WordManager {
       if (lastDate.length > 0) {
         DateTime previous = Word.getDateTime(lastDate);
         DateTime current = Word.getDateTime(wordList[i].date);
-        print(previous.difference(current).inDays);
         if (previous.difference(current).inDays > 1) {
           List<Word> newWords = (await dao.getWords(wordList[i].date, lastDate));
           newWordLists.add(newWords);
