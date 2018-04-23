@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
+
+import 'classes/Word.dart';
 
 import 'pages/MyHomePage.dart';
 
@@ -9,16 +12,26 @@ import 'globals/AdsManager.dart';
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
-  static WordManager wm = new WordManager();
-  static AdsManager ads = new AdsManager();
+  static final WordManager wm = new WordManager();
+  static final AdsManager ads = new AdsManager();
 
-  Widget body = new FutureBuilder<bool>(
-    future: ads.load(),
-    builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-      switch (snapshot.connectionState) {
-        case ConnectionState.none: return new Text('Press button to start');
-        case ConnectionState.waiting: return new Center(
-          child: new Column(
+  static final Future<bool> future = new Future<bool>(() async {
+    bool adsFuture = await ads.load();
+    List<Word> wmFuture = await wm.initWOTD();
+
+    if (adsFuture && wmFuture != null) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+
+  static final Widget loadingBody = new Scaffold(
+    appBar: new AppBar(),
+    body: new Center(
+      child: new Builder(
+        builder: (BuildContext context) {
+          return new Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               new CircularProgressIndicator(
@@ -32,12 +45,22 @@ class MyApp extends StatelessWidget {
                 style: Theme.of(context).textTheme.display1,
               )
             ],
-          ),
-        );
+          );
+        },
+      ),
+    ),
+  );
+
+  final Widget body = new FutureBuilder<bool>(
+    future: future,
+    builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+      switch (snapshot.connectionState) {
+        case ConnectionState.none: return new Text('Press button to start');
+        case ConnectionState.waiting: return loadingBody;
         
         default:
           if (snapshot.hasError) return new Text('Error: ${snapshot.error}');
-          else return new MyHomePage();
+          else if (snapshot.data) return new MyHomePage();
       }
     }
   );

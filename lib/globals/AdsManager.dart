@@ -28,7 +28,7 @@ class AdsManager {
         ? WORD_PAGE_BANNER_ID
         : BannerAd.testAdUnitId),
       targetingInfo: targetingInfo,
-      size: AdSize.smartBanner,
+      size: AdSize.fullBanner,
       listener: (MobileAdEvent event) {}
     );
   }

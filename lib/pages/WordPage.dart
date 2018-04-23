@@ -32,7 +32,7 @@ class _WordPageState extends State<WordPage> {
     ads.show();
 
     if (widget.word == null) return new Padding(
-      padding: EdgeInsets.only(bottom: 100.0),
+      padding: EdgeInsets.only(bottom: 0.0),
       child: new Center(
         child: new Text(
           "Ordet for i dag er ikke tilgjengelig enda",
