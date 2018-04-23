@@ -17,9 +17,7 @@ class WordManager {
   List<Word> wordList = <Word>[];
   List<Word> favorites = <Word>[];
 
-  WordManager._internal() {
-    initFavorites();
-  }
+  WordManager._internal();
 
   DataAccess dao = new DataAccess();
   LocalStorage lst = new LocalStorage();
@@ -27,12 +25,17 @@ class WordManager {
   Future<bool> initWordList() async {
     wordList = (await lst.getWordList());
 
-    DateTime today = new DateTime.now();
-    DateTime mostRecentWordDate = Word.getDateTime(wordList.first.date);
-
-    if (today.difference(mostRecentWordDate).inDays != 0) {
+    if (wordList.length < 10) {
       List<Word> recentWords = (await dao.getWords(Word.getPastDate(10), Word.getCurrentDate()));
       addWordList(recentWords);
+    } else if (wordList.length > 0) {
+      DateTime today = new DateTime.now();
+      DateTime mostRecentWordDate = Word.getDateTime(wordList.first.date);
+
+      if (today.difference(mostRecentWordDate).inDays != 0) {
+        List<Word> recentWords = (await dao.getWords(Word.getPastDate(10), Word.getCurrentDate()));
+        addWordList(recentWords);
+      }
     }
 
     String lastDate = "";
@@ -55,6 +58,8 @@ class WordManager {
 
     lst.writeWordList(wordList);
     wordList.sort((a,b) => b.date.compareTo(a.date));
+
+    initFavorites();
 
     return true;
   }

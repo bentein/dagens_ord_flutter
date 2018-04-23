@@ -39,31 +39,39 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      body: new Scrollbar(
-        child: new ListView.builder(
-          padding: new EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
-          itemCount: wm.wordList.length + 1,
-          physics: AlwaysScrollableScrollPhysics(),
-          itemBuilder: (BuildContext context, int index) {
-            if (index < wm.wordList.length) return new WordCard(word: wm.wordList[index]);
-            else return new Padding(
-              padding: new EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
-              child: new GestureDetector(
-                child: new Container(
-                  color: Colors.transparent,
-                  child: new Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      new Icon(ico),
-                      new Text(_refreshMessage),
-                    ],
+      body: new NotificationListener(
+        onNotification: (OverscrollNotification n) {
+          if (n.overscroll > 1) {
+            _getHistory();
+          }
+          return true;
+        },
+        child: new Scrollbar(
+          child: new ListView.builder(
+            padding: new EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
+            itemCount: wm.wordList.length + 1,
+            physics: AlwaysScrollableScrollPhysics(),
+            itemBuilder: (BuildContext context, int index) {
+              if (index < wm.wordList.length) return new WordCard(word: wm.wordList[index]);
+              else return new Padding(
+                padding: new EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
+                child: new GestureDetector(
+                  child: new Container(
+                    color: Colors.transparent,
+                    child: new Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        new Icon(ico),
+                        new Text(_refreshMessage),
+                      ],
+                    ),
                   ),
+                  onTap: _getHistory,
                 ),
-                onTap: _getHistory,
-              ),
-            );
-          },
-        ), 
+              );
+            },
+          ), 
+        ),
       ),
     );
   }

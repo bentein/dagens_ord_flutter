@@ -17,8 +17,8 @@ class MyApp extends StatelessWidget {
 
   static final Future<bool> future = new Future<bool>(() async {
     bool adsFuture = await ads.load();
-    List<Word> wotdFuture = await wm.initWOTD();
     bool wlFuture = await wm.initWordList();
+    List<Word> wotdFuture = await wm.initWOTD();
 
     if (adsFuture && wlFuture && wotdFuture != null) {
       return true;
