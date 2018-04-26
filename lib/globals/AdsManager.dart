@@ -11,7 +11,7 @@ class AdsManager {
   }
 
   AdsManager._internal() {
-    FirebaseAdMob.instance.initialize(appId: FirebaseAdMob.testAppId);
+    FirebaseAdMob.instance.initialize(appId: APP_ID);
   }
 
   static final MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
@@ -28,7 +28,7 @@ class AdsManager {
         ? WORD_PAGE_BANNER_ID
         : BannerAd.testAdUnitId),
       targetingInfo: targetingInfo,
-      size: AdSize.fullBanner,
+      size: AdSize.smartBanner,
       listener: (MobileAdEvent event) {}
     );
   }
