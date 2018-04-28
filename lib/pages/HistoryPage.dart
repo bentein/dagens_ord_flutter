@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 import '../classes/Word.dart';
 
@@ -17,23 +18,38 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-  WordManager wm = new WordManager();
-  DataAccess dao = new DataAccess();
-  LocalStorage lst = new LocalStorage();
+  static WordManager wm = new WordManager();
+  static DataAccess dao = new DataAccess();
+  static LocalStorage lst = new LocalStorage();
 
-  String _refreshMessage = " Last inn eldre ord";
-  IconData ico = Icons.refresh;
+  bool wordListExhausted = false;
+  bool doSearch = false;
+  int listLength = min(5, wm.wordList.length);
 
   _getHistory() async {
-    int lastEntry = Word.getDaysSince(wm.wordList.last);
-    List<Word> list = (await dao.getWords(Word.getPastDate(lastEntry + 10), Word.getPastDate(lastEntry+1)));
     setState(() {
-      if (list.length == 0) {
-        _refreshMessage = " Det er dessverre ingen eldre ord";
-        ico = Icons.close;
+      if (!wordListExhausted && listLength < wm.wordList.length + 10) {
+        listLength = min(listLength + 10, wm.wordList.length);
+      } else {
+        wordListExhausted = true;
+        doSearch = true;
       }
-      wm.addWordList(list);
     });
+
+    if (doSearch) {
+      int lastEntry = Word.getDaysSince(wm.wordList.last);
+      List<Word> receivedWords = (await dao.getWords(Word.getPastDate(lastEntry + 10), Word.getPastDate(lastEntry+1)));
+    
+      setState(() {
+        if (receivedWords.length == 0) {
+          doSearch = false;
+        } else {
+          wm.addWordList(receivedWords);
+          listLength = wm.wordList.length;
+        }
+      });
+    }
+
   }
 
   @override
@@ -49,10 +65,11 @@ class _HistoryPageState extends State<HistoryPage> {
         child: new Scrollbar(
           child: new ListView.builder(
             padding: new EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
-            itemCount: wm.wordList.length + 1,
+            itemCount: listLength,
             physics: AlwaysScrollableScrollPhysics(),
             itemBuilder: (BuildContext context, int index) {
-              if (index < wm.wordList.length) return new WordCard(word: wm.wordList[index]);
+              return new WordCard(word: wm.wordList[index]);
+              /* if (index < wm.wordList.length) 
               else return new Padding(
                 padding: new EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
                 child: new GestureDetector(
@@ -68,7 +85,7 @@ class _HistoryPageState extends State<HistoryPage> {
                   ),
                   onTap: _getHistory,
                 ),
-              );
+              ); */
             },
           ), 
         ),
