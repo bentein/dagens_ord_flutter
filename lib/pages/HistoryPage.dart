@@ -27,11 +27,12 @@ class _HistoryPageState extends State<HistoryPage> {
 
   List<Word> historyList = <Word>[];
 
+  Future<List<Word>> newWordsFuture = new Future((){});
   bool dbExhausted = false;
   bool doUpdate = true;
 
   Future<List<Word>> getNewWords() {
-    return new Future(() {
+    Future<List<Word>> newWords = new Future(() {
       List<Word> newWordsList = <Word>[];
 
       if (historyList.length < wm.wordList.length) {
@@ -46,6 +47,12 @@ class _HistoryPageState extends State<HistoryPage> {
       }
       return newWordsList;
     });
+
+    setState(() {
+      newWordsFuture = newWords;
+    });
+
+    return newWords;
   }
 
   void _getHistory() async {
@@ -67,10 +74,28 @@ class _HistoryPageState extends State<HistoryPage> {
 
   }
 
+  Widget getListView(int listLength) {
+    return new ListView.builder(
+      padding: new EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
+      controller: controller,
+      itemCount: listLength,
+      physics: AlwaysScrollableScrollPhysics(),
+      itemBuilder: (BuildContext context, int index) {
+        if (index < wm.wordList.length) return new WordCard(word: wm.wordList[index]);
+        else return new Center(
+          child: new Padding(
+            padding: new EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
+            child: new CircularProgressIndicator(),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (historyList.length == 0) {
-      for (int i = 0; i < 5; i++) {
+      for (int i = 0; i < 6; i++) {
         historyList.add(wm.wordList[i]);
       }
     }
@@ -78,31 +103,24 @@ class _HistoryPageState extends State<HistoryPage> {
     return new Scaffold(
       body: new NotificationListener(
         onNotification: (ScrollUpdateNotification n) {
-          if (doUpdate && controller.position.pixels > controller.position.maxScrollExtent * (4/5)) {
+          if (!dbExhausted && doUpdate && controller.position.pixels > controller.position.maxScrollExtent * (4/5)) {
             doUpdate = false;
             _getHistory();
           }
           return true;
         },
-        child: new ListView.builder(
-          padding: new EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
-          controller: controller,
-          itemCount: doUpdate 
-            ? historyList.length
-            : dbExhausted
-              ? historyList.length
-              : historyList.length + 1,
-          physics: AlwaysScrollableScrollPhysics(),
-          itemBuilder: (BuildContext context, int index) {
-            if (index < wm.wordList.length) return new WordCard(word: wm.wordList[index]);
-            else return new Center(
-              child: new Padding(
-                padding: new EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
-                child: new CircularProgressIndicator(),
-              ),
-            );
-          },
-        ), 
+        child: new FutureBuilder<List<Word>>(
+          future: newWordsFuture,
+          builder: (BuildContext context, AsyncSnapshot<List<Word>> snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.none: return new Text('Press button to start');
+              case ConnectionState.waiting: return getListView(historyList.length + 1);
+              default:
+                if (snapshot.hasError) return new Text('Error: ${snapshot.error}');
+                else return getListView(historyList.length);
+            }
+          }
+        ),
       ),
     );
   }
