@@ -23,37 +23,45 @@ class _HistoryPageState extends State<HistoryPage> {
   static DataAccess dao = new DataAccess();
   static LocalStorage lst = new LocalStorage();
 
-  bool wordListExhausted = false;
-  bool doSearch = false;
+  ScrollController controller = new ScrollController();
+
+  List<Word> historyList = <Word>[];
+
+  bool dbExhausted = false;
   bool doUpdate = true;
 
-  int listLength = min(5, wm.wordList.length);
+  Future<List<Word>> getNewWords() {
+    return new Future(() {
+      List<Word> newWordsList = <Word>[];
 
-  _getHistory() async {
+      if (historyList.length < wm.wordList.length) {
+        int index = 0;
+        for (int i = historyList.length; i < wm.wordList.length && index < 2; i++) {
+          newWordsList.add(wm.wordList[i]);
+          index++;
+        }
+      } else if (!dbExhausted) {
+        int lastEntry = Word.getDaysSince(wm.wordList.last);
+        return dao.getWords(Word.getPastDate(lastEntry + 10), Word.getPastDate(lastEntry+1));
+      }
+      return newWordsList;
+    });
+  }
+
+  void _getHistory() async {
+    List<Word> newWords = await getNewWords();
+
     setState(() {
-      if (!wordListExhausted && listLength < wm.wordList.length + 10) {
-        listLength = min(listLength + 5, wm.wordList.length);
+      if (newWords.length == 0) {
+        dbExhausted = true;
       } else {
-        wordListExhausted = true;
-        doSearch = true;
+        historyList.addAll(newWords);
       }
     });
-
-    if (doSearch) {
-      int lastEntry = Word.getDaysSince(wm.wordList.last);
-      List<Word> receivedWords = (await dao.getWords(Word.getPastDate(lastEntry + 10), Word.getPastDate(lastEntry+1)));
     
-      setState(() {
-        if (receivedWords.length == 0) {
-          doSearch = false;
-        } else {
-          wm.addWordList(receivedWords);
-          listLength = min(listLength + 5, wm.wordList.length);
-        }
-      });
-    }
+    wm.addWordList(newWords);
 
-    Future f = new Future.delayed(new Duration(milliseconds: 100), () {
+    new Future.delayed(new Duration(milliseconds: 100), () {
       doUpdate = true;
     });
 
@@ -61,42 +69,40 @@ class _HistoryPageState extends State<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (historyList.length == 0) {
+      for (int i = 0; i < 5; i++) {
+        historyList.add(wm.wordList[i]);
+      }
+    }
+
     return new Scaffold(
       body: new NotificationListener(
-        onNotification: (OverscrollNotification n) {
-          if (doUpdate && n.overscroll > 1) {
+        onNotification: (ScrollUpdateNotification n) {
+          if (doUpdate && controller.position.pixels > controller.position.maxScrollExtent * (4/5)) {
             doUpdate = false;
             _getHistory();
           }
           return true;
         },
-        child: new Scrollbar(
-          child: new ListView.builder(
-            padding: new EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
-            itemCount: listLength,
-            physics: AlwaysScrollableScrollPhysics(),
-            itemBuilder: (BuildContext context, int index) {
-              return new WordCard(word: wm.wordList[index]);
-              /* if (index < wm.wordList.length) 
-              else return new Padding(
+        child: new ListView.builder(
+          padding: new EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
+          controller: controller,
+          itemCount: doUpdate 
+            ? historyList.length
+            : dbExhausted
+              ? historyList.length
+              : historyList.length + 1,
+          physics: AlwaysScrollableScrollPhysics(),
+          itemBuilder: (BuildContext context, int index) {
+            if (index < wm.wordList.length) return new WordCard(word: wm.wordList[index]);
+            else return new Center(
+              child: new Padding(
                 padding: new EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
-                child: new GestureDetector(
-                  child: new Container(
-                    color: Colors.transparent,
-                    child: new Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        new Icon(ico),
-                        new Text(_refreshMessage),
-                      ],
-                    ),
-                  ),
-                  onTap: _getHistory,
-                ),
-              ); */
-            },
-          ), 
-        ),
+                child: new CircularProgressIndicator(),
+              ),
+            );
+          },
+        ), 
       ),
     );
   }
