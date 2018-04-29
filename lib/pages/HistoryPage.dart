@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'dart:math';
 
 import '../classes/Word.dart';
@@ -24,12 +25,14 @@ class _HistoryPageState extends State<HistoryPage> {
 
   bool wordListExhausted = false;
   bool doSearch = false;
+  bool doUpdate = true;
+
   int listLength = min(5, wm.wordList.length);
 
   _getHistory() async {
     setState(() {
       if (!wordListExhausted && listLength < wm.wordList.length + 10) {
-        listLength = min(listLength + 10, wm.wordList.length);
+        listLength = min(listLength + 5, wm.wordList.length);
       } else {
         wordListExhausted = true;
         doSearch = true;
@@ -45,10 +48,14 @@ class _HistoryPageState extends State<HistoryPage> {
           doSearch = false;
         } else {
           wm.addWordList(receivedWords);
-          listLength = wm.wordList.length;
+          listLength = min(listLength + 5, wm.wordList.length);
         }
       });
     }
+
+    Future f = new Future.delayed(new Duration(milliseconds: 100), () {
+      doUpdate = true;
+    });
 
   }
 
@@ -57,7 +64,8 @@ class _HistoryPageState extends State<HistoryPage> {
     return new Scaffold(
       body: new NotificationListener(
         onNotification: (OverscrollNotification n) {
-          if (n.overscroll > 1) {
+          if (doUpdate && n.overscroll > 1) {
+            doUpdate = false;
             _getHistory();
           }
           return true;
