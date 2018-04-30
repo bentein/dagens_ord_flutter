@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'dart:math';
 
 import '../classes/Word.dart';
 
@@ -9,6 +8,8 @@ import '../globals/DataAccess.dart';
 import '../globals/LocalStorage.dart';
 
 import '../widgets/WordCard.dart';
+
+import '../globals/Constants.dart' show HISTORY_INCREMENTS;
 
 
 class HistoryPage extends StatefulWidget {
@@ -23,46 +24,37 @@ class _HistoryPageState extends State<HistoryPage> {
   static DataAccess dao = new DataAccess();
   static LocalStorage lst = new LocalStorage();
 
+  bool dbExhausted = false;
+  bool doUpdate = true;
+
   ScrollController controller = new ScrollController();
 
   List<Word> historyList = initHistoryList();
 
   static List<Word> initHistoryList() {
     List<Word> histList = <Word>[];
-
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < HISTORY_INCREMENTS; i++) {
       histList.add(wm.wordList[i]);
     }
-
     return histList;
   }
 
-  Future<List<Word>> newWordsFuture = new Future((){});
-  bool dbExhausted = false;
-  bool doUpdate = true;
-
   Future<List<Word>> getNewWords() {
-    Future<List<Word>> newWords = new Future(() {
+    return new Future(() {
       List<Word> newWordsList = <Word>[];
 
       if (historyList.length < wm.wordList.length) {
         int index = 0;
-        for (int i = historyList.length; i < wm.wordList.length && index < 2; i++) {
+        for (int i = historyList.length; i < wm.wordList.length && index < HISTORY_INCREMENTS; i++) {
           newWordsList.add(wm.wordList[i]);
           index++;
         }
       } else if (!dbExhausted) {
         int lastEntry = Word.getDaysSince(wm.wordList.last);
-        return dao.getWords(Word.getPastDate(lastEntry + 10), Word.getPastDate(lastEntry+1));
+        return dao.getWords(Word.getPastDate(lastEntry + HISTORY_INCREMENTS), Word.getPastDate(lastEntry+1));
       }
       return newWordsList;
     });
-
-    setState(() {
-      newWordsFuture = newWords;
-    });
-
-    return newWords;
   }
 
   void _getHistory() async {
@@ -106,8 +98,8 @@ class _HistoryPageState extends State<HistoryPage> {
   Widget build(BuildContext context) {
     return new Scaffold(
       body: new NotificationListener(
-        onNotification: (ScrollUpdateNotification n) {
-          if (!dbExhausted && doUpdate && controller.position.pixels > controller.position.maxScrollExtent * (4/5)) {
+        onNotification: (ScrollUpdateNotification n1) {
+          if (!dbExhausted && doUpdate && controller.position.pixels > controller.position.maxScrollExtent * (9/10)) {
             doUpdate = false;
             _getHistory();
           }
