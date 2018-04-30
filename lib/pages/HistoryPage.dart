@@ -25,7 +25,17 @@ class _HistoryPageState extends State<HistoryPage> {
 
   ScrollController controller = new ScrollController();
 
-  List<Word> historyList = <Word>[];
+  List<Word> historyList = initHistoryList();
+
+  static List<Word> initHistoryList() {
+    List<Word> histList = <Word>[];
+
+    for (int i = 0; i < 6; i++) {
+      histList.add(wm.wordList[i]);
+    }
+
+    return histList;
+  }
 
   Future<List<Word>> newWordsFuture = new Future((){});
   bool dbExhausted = false;
@@ -81,7 +91,7 @@ class _HistoryPageState extends State<HistoryPage> {
       itemCount: listLength,
       physics: AlwaysScrollableScrollPhysics(),
       itemBuilder: (BuildContext context, int index) {
-        if (index < wm.wordList.length) return new WordCard(word: wm.wordList[index]);
+        if (index < historyList.length) return new WordCard(word: historyList[index]);
         else return new Center(
           child: new Padding(
             padding: new EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
@@ -94,12 +104,6 @@ class _HistoryPageState extends State<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (historyList.length == 0) {
-      for (int i = 0; i < 6; i++) {
-        historyList.add(wm.wordList[i]);
-      }
-    }
-
     return new Scaffold(
       body: new NotificationListener(
         onNotification: (ScrollUpdateNotification n) {
@@ -109,18 +113,7 @@ class _HistoryPageState extends State<HistoryPage> {
           }
           return true;
         },
-        child: new FutureBuilder<List<Word>>(
-          future: newWordsFuture,
-          builder: (BuildContext context, AsyncSnapshot<List<Word>> snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.none: return new Text('Press button to start');
-              case ConnectionState.waiting: return getListView(historyList.length + 1);
-              default:
-                if (snapshot.hasError) return new Text('Error: ${snapshot.error}');
-                else return getListView(historyList.length);
-            }
-          }
-        ),
+        child: getListView(dbExhausted ? historyList.length : historyList.length + 1),
       ),
     );
   }
